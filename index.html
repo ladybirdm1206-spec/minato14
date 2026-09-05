@@ -13,6 +13,27 @@
       --border-color: #E2D9CC;
       --sat-color: #2E6B9E;
       --sun-color: #C0392B;
+
+      /* 隊別カラー（イラスト制服準拠） */
+      --col-beaver: #1565A0;
+      --col-beaver-border: #3897E2;
+      --col-beaver-bg: #E8F4FC;
+      --col-beaver-hover: #D6EDFA;
+
+      --col-cub: #003E82;
+      --col-cub-border: #004EA2;
+      --col-cub-bg: #E8EFF9;
+      --col-cub-hover: #D5E4F7;
+
+      --col-boy: #365522;
+      --col-boy-border: #4B7132;
+      --col-boy-bg: #EFF5EB;
+      --col-boy-hover: #DDF0D6;
+
+      --col-all: #800808;
+      --col-all-border: #800808;
+      --col-all-bg: #FFF0E8;
+      --col-all-hover: #FFE2D4;
     }
 
     * {
@@ -182,11 +203,8 @@
     .sun, .day-header:first-child { color: var(--sun-color); }
     .sat, .day-header:last-child { color: var(--sat-color); }
 
-    /* イベントタグ（時間のみ表示） */
+    /* イベントタグ（隊別カラー＆時間のみ表示） */
     .event-tag {
-      background-color: #FFF2E8;
-      border-left: 3px solid var(--bs-bordeaux);
-      color: var(--bs-bordeaux);
       padding: 3px 4px;
       border-radius: 3px;
       font-size: 0.75rem;
@@ -197,18 +215,102 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      transition: background-color 0.15s ease;
+      transition: all 0.15s ease;
     }
 
-    .event-tag:hover {
-      background-color: #FFE3D1;
+    .event-tag.tag-beaver {
+      background-color: var(--col-beaver-bg);
+      border-left: 3px solid var(--col-beaver-border);
+      color: var(--col-beaver);
     }
+    .event-tag.tag-beaver:hover { background-color: var(--col-beaver-hover); }
+    .event-tag.tag-beaver .event-time { color: var(--col-beaver); }
+
+    .event-tag.tag-cub {
+      background-color: var(--col-cub-bg);
+      border-left: 3px solid var(--col-cub-border);
+      color: var(--col-cub);
+    }
+    .event-tag.tag-cub:hover { background-color: var(--col-cub-hover); }
+    .event-tag.tag-cub .event-time { color: var(--col-cub); }
+
+    .event-tag.tag-boy {
+      background-color: var(--col-boy-bg);
+      border-left: 3px solid var(--col-boy-border);
+      color: var(--col-boy);
+    }
+    .event-tag.tag-boy:hover { background-color: var(--col-boy-hover); }
+    .event-tag.tag-boy .event-time { color: var(--col-boy); }
+
+    .event-tag.tag-all {
+      background-color: var(--col-all-bg);
+      border-left: 3px solid var(--col-all-border);
+      color: var(--col-all);
+    }
+    .event-tag.tag-all:hover { background-color: var(--col-all-hover); }
+    .event-tag.tag-all .event-time { color: var(--col-all); }
 
     .event-time {
       font-weight: bold;
-      color: var(--bs-bordeaux);
       font-size: 0.75rem;
     }
+
+    /* 隊別カラー凡例バー */
+    .legend-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding: 6px 12px;
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .legend-item::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    .legend-beaver::before {
+      background-color: var(--col-beaver-border);
+    }
+    .legend-cub::before {
+      background-color: var(--col-cub-border);
+    }
+    .legend-boy::before {
+      background-color: var(--col-boy-border);
+    }
+    .legend-all::before {
+      background-color: var(--col-all-border);
+    }
+
+    /* モーダル用カテゴリバッジ */
+    .category-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+    .badge-beaver { background-color: var(--col-beaver-bg); color: var(--col-beaver); border: 1px solid var(--col-beaver-border); }
+    .badge-cub { background-color: var(--col-cub-bg); color: var(--col-cub); border: 1px solid var(--col-cub-border); }
+    .badge-boy { background-color: var(--col-boy-bg); color: var(--col-boy); border: 1px solid var(--col-boy-border); }
+    .badge-all { background-color: var(--col-all-bg); color: var(--col-all); border: 1px solid var(--col-all-border); }
 
     /* 詳細モーダル（ポップアップ） */
     .modal-overlay {
@@ -352,6 +454,19 @@
       .event-time {
         font-size: 0.68rem;
       }
+      .legend-bar {
+        gap: 8px 12px;
+        padding: 5px 8px;
+        margin-bottom: 10px;
+      }
+      .legend-item {
+        font-size: 0.72rem;
+        gap: 4px;
+      }
+      .legend-item::before {
+        width: 8px;
+        height: 8px;
+      }
     }
   </style>
 </head>
@@ -376,6 +491,14 @@
   <!-- スカウトイラスト -->
   <div class="illustration-wrap">
     <img src="scout_001.gif" alt="ボーイスカウトイラスト" class="scouts-illust">
+  </div>
+
+  <!-- 隊別カラー凡例バー -->
+  <div class="legend-bar">
+    <span class="legend-item legend-beaver">ビーバー</span>
+    <span class="legend-item legend-cub">カブ</span>
+    <span class="legend-item legend-boy">ボーイ・ローバー</span>
+    <span class="legend-item legend-all">全体</span>
   </div>
 
   <!-- カレンダー本体 -->
@@ -485,6 +608,21 @@
     document.body.appendChild(script);
   }
 
+  function getCategoryType(category, title) {
+    const text = `${category || ""} ${title || ""}`.toLowerCase();
+    if (text.includes("ビーバー") || text.includes("bvs") || text.includes("beaver")) {
+      return "beaver";
+    }
+    if (text.includes("カブ") || text.includes("cs") || text.includes("cub")) {
+      return "cub";
+    }
+    if (text.includes("ボーイ") || text.includes("bs") || text.includes("boy") || text.includes("ローバー") || text.includes("rs") || text.includes("rover") || text.includes("ベンチャー") || text.includes("vs") || text.includes("venture")) {
+      // ローバーはボーイと同じ色
+      return "boy";
+    }
+    return "all";
+  }
+
   function renderCalendar() {
     const year = displayDate.getFullYear();
     const month = displayDate.getMonth();
@@ -528,11 +666,12 @@
       const dayEvents = events.filter(e => e.date === dateStr);
 
       dayEvents.forEach(e => {
+        const catType = getCategoryType(e.category, e.title);
         const ev = document.createElement("div");
-        ev.className = "event-tag";
+        ev.className = `event-tag tag-${catType}`;
         const timeText = e.startTime ? e.startTime : "予定";
         ev.innerHTML = `<span class="event-time">${timeText}</span>`;
-        ev.title = `${timeText} ${e.title}`;
+        ev.title = `${timeText} ${e.title}${e.category ? ' (' + e.category + ')' : ''}`;
         ev.onclick = () => showModal(e);
         cell.appendChild(ev);
       });
@@ -550,7 +689,8 @@
     const catWrap = document.getElementById("mCategoryWrap");
     if (item.category) {
       catWrap.style.display = "block";
-      document.getElementById("mCategory").textContent = item.category;
+      const catType = getCategoryType(item.category, item.title);
+      document.getElementById("mCategory").innerHTML = `<span class="category-badge badge-${catType}">${item.category}</span>`;
     } else {
       catWrap.style.display = "none";
     }
