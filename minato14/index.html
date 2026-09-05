@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ボーイスカウト港14団 活動カレンダー</title>
+  <style>
+    :root {
+      --bg-cream: #FAF6EF;
+      --card-bg: #FFFFFF;
+      --bs-bordeaux: #800808;
+      --text-main: #333333;
+      --border-color: #E2D9CC;
+      --sat-color: #2E6B9E;
+      --sun-color: #C0392B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      padding: 20px 10px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* 管理者バー */
+    .admin-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .status-msg {
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .admin-btn {
+      background-color: #ffffff;
+      color: var(--bs-bordeaux);
+      border: 1.5px solid var(--bs-bordeaux);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .admin-btn:hover {
+      background-color: var(--bs-bordeaux);
+      color: #ffffff;
+    }
+
+    /* ヘッダーエリア */
+    .header-card {
+      background-color: var(--bs-bordeaux);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 22px 16px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      margin-bottom: 20px;
+    }
+
+    .main-title {
+      font-size: 1.6rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      margin: 0;
+    }
+
+    /* イラスト表示エリア */
+    .illustration-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .scouts-illust {
+      max-width: 260px;
+      height: auto;
+      display: block;
+    }
+
+    /* カレンダー外枠 */
+    .calendar-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    /* ナビゲーション */
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .nav-bar h2 {
+      font-size: 1.3rem;
+      color: var(--bs-bordeaux);
+    }
+
+    .nav-btn {
+      background-color: var(--bs-bordeaux);
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .nav-btn:hover {
+      opacity: 0.88;
+    }
+
+    /* カレンダー表 */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-top: 1px solid var(--border-color);
+      border-left: 1px solid var(--border-color);
+    }
+
+    .day-header {
+      background-color: #F4ECE1;
+      padding: 8px 4px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.85rem;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .day-cell {
+      min-height: 90px;
+      padding: 4px;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      background-color: #ffffff;
+      font-size: 0.8rem;
+    }
+
+    .day-cell.empty {
+      background-color: #FAF8F5;
+    }
+
+    .day-num {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .sun, .day-header:first-child { color: var(--sun-color); }
+    .sat, .day-header:last-child { color: var(--sat-color); }
+
+    /* イベントタグ */
+    .event-tag {
+      background-color: #FFF2E8;
+      border-left: 3px solid var(--bs-bordeaux);
+      color: #611111;
+      padding: 3px 5px;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      margin-bottom: 3px;
+      line-height: 1.3;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .event-tag:hover {
+      background-color: #FFE3D1;
+    }
+
+    .event-time {
+      font-weight: bold;
+      margin-right: 2px;
+      color: var(--bs-bordeaux);
+    }
+
+    /* 詳細モーダル（ポップアップ） */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 15px;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      color: var(--bs-bordeaux);
+      margin-bottom: 12px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    .modal-item {
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .modal-label {
+      font-weight: bold;
+      color: #555;
+      display: inline-block;
+      min-width: 60px;
+    }
+
+    .modal-desc-box {
+      margin-top: 4px;
+      background: #FAF8F5;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      white-space: pre-wrap; /* 改行をそのまま反映 */
+      font-size: 0.88rem;
+    }
+
+    .link-btn {
+      display: inline-block;
+      background-color: #2E6B9E;
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .link-btn.minute-btn {
+      background-color: #2E7D32; /* 議事録用グリーン */
+    }
+
+    .modal-close-btn {
+      display: block;
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      background: var(--bs-bordeaux);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .main-title { font-size: 1.25rem; }
+      .scouts-illust { max-width: 200px; }
+      .day-cell { min-height: 70px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 管理者バー＆ステータス -->
+  <div class="admin-bar">
+    <span class="status-msg" id="loadStatus">データを取得中...</span>
+    <a href="https://docs.google.com/spreadsheets/d/13YXWZsMOgoFFhcry6GUsOFgQ6ikxdABqaz8kE5Smnpc/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer" class="admin-btn">
+      ⚙ 管理者用ページ
+    </a>
+  </div>
+
+  <!-- タイトルバー -->
+  <div class="header-card">
+    <h1 class="main-title">ボーイスカウト港14団 活動カレンダー</h1>
+  </div>
+
+  <!-- スカウトイラスト -->
+  <div class="illustration-wrap">
+    <img src="scout_001.gif" alt="ボーイスカウトイラスト" class="scouts-illust">
+  </div>
+
+  <!-- カレンダー本体 -->
+  <div class="calendar-card">
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="moveMonth(-1)">&lt; 先月</button>
+      <h2 id="currentMonthYear"></h2>
+      <button class="nav-btn" onclick="moveMonth(1)">翌月 &gt;</button>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+</div>
+
+<!-- 詳細モーダル -->
+<div class="modal-overlay" id="eventModal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3 class="modal-title" id="mTitle"></h3>
+    <div class="modal-item"><span class="modal-label">日時: </span><span id="mDateTime"></span></div>
+    <div class="modal-item" id="mCategoryWrap"><span class="modal-label">対象: </span><span id="mCategory"></span></div>
+    <div class="modal-item" id="mZoomWrap"><span class="modal-label">Zoom: </span><a id="mZoom" href="" target="_blank" rel="noopener" class="link-btn">Zoomミーティングに参加</a></div>
+    <div class="modal-item" id="mMinuteWrap"><span class="modal-label">議事録: </span><a id="mMinute" href="" target="_blank" rel="noopener" class="link-btn minute-btn">📄 議事録を開く</a></div>
+    <div class="modal-item" id="mDescWrap">
+      <span class="modal-label">詳細:</span>
+      <div class="modal-desc-box" id="mDesc"></div>
+    </div>
+    <button class="modal-close-btn" onclick="closeModal()">閉じる</button>
+  </div>
+</div>
+
+<script>
+  const SPREADSHEET_ID = "13YXWZsMOgoFFhcry6GUsOFgQ6ikxdABqaz8kE5Smnpc";
+  let events = [];
+  let displayDate = new Date();
+
+  function normalizeDate(val) {
+    if (!val) return "";
+    let str = String(val).trim().replace(/\//g, "-");
+    
+    if (str.startsWith("Date(") && str.endsWith(")")) {
+      const parts = str.substring(5, str.length - 1).split(",");
+      const y = parts[0];
+      const m = String(parseInt(parts[1], 10) + 1).padStart(2, '0');
+      const d = String(parseInt(parts[2], 10)).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    const match = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (match) {
+      return `${match[1]}-${String(match[2]).padStart(2, '0')}-${String(match[3]).padStart(2, '0')}`;
+    }
+    return "";
+  }
+
+  function getCellValue(cell) {
+    if (!cell) return "";
+    return (cell.f !== undefined && cell.f !== null) ? cell.f : (cell.v !== undefined && cell.v !== null ? cell.v : "");
+  }
+
+  window.handleSpreadsheetData = function(json) {
+    const statusEl = document.getElementById("loadStatus");
+    try {
+      const rows = json.table.rows;
+      events = rows.map(r => {
+        const c = r.c || [];
+        // 列の対応:
+        // c[0]: A列 日付
+        // c[1]: B列 開始時刻
+        // c[2]: C列 終了時刻
+        // c[3]: D列 イベント名
+        // c[4]: E列 カテゴリ
+        // c[5]: F列 Zoomリンク
+        // c[8]: I列 詳細説明
+        // c[9]: J列 議事録
+        const rawDate = getCellValue(c[0]);
+        const startTime = getCellValue(c[1]);
+        const endTime = getCellValue(c[2]);
+        const title = getCellValue(c[3]);
+        const category = getCellValue(c[4]);
+        const zoom = getCellValue(c[5]);
+        const desc = getCellValue(c[8]);
+        const minutes = getCellValue(c[9]);
+
+        return {
+          date: normalizeDate(rawDate),
+          title: String(title),
+          startTime: String(startTime),
+          endTime: String(endTime),
+          category: String(category),
+          zoom: String(zoom),
+          desc: String(desc),
+          minutes: String(minutes)
+        };
+      }).filter(item => item.date && item.title);
+
+      statusEl.textContent = `予定を ${events.length} 件読み込みました`;
+      renderCalendar();
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = "データの解析に失敗しました";
+    }
+  };
+
+  function loadSheetDataJSONP() {
+    const script = document.createElement("script");
+    script.src = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=responseHandler:handleSpreadsheetData&t=${Date.now()}`;
+    script.onerror = () => {
+      document.getElementById("loadStatus").textContent = "スプレッドシートの取得に失敗しました。";
+    };
+    document.body.appendChild(script);
+  }
+
+  function renderCalendar() {
+    const year = displayDate.getFullYear();
+    const month = displayDate.getMonth();
+    
+    document.getElementById("currentMonthYear").textContent = `${year}年 ${month + 1}月`;
+    const grid = document.getElementById("calendarGrid");
+    grid.innerHTML = "";
+
+    const weekDays = ["日", "月", "火", "水", "木", "金", "土"];
+    weekDays.forEach(day => {
+      const header = document.createElement("div");
+      header.className = "day-header";
+      header.textContent = day;
+      grid.appendChild(header);
+    });
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDayIndex; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.className = "day-cell empty";
+      grid.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= lastDate; day++) {
+      const cell = document.createElement("div");
+      cell.className = "day-cell";
+      
+      const dayOfWeek = (firstDayIndex + day - 1) % 7;
+      let dayClass = "";
+      if (dayOfWeek === 0) dayClass = "sun";
+      if (dayOfWeek === 6) dayClass = "sat";
+
+      const dateNum = document.createElement("div");
+      dateNum.className = `day-num ${dayClass}`;
+      dateNum.textContent = day;
+      cell.appendChild(dateNum);
+
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const dayEvents = events.filter(e => e.date === dateStr);
+
+      dayEvents.forEach(e => {
+        const ev = document.createElement("div");
+        ev.className = "event-tag";
+        let timeLabel = e.startTime ? `<span class="event-time">${e.startTime}</span> ` : "";
+        ev.innerHTML = `${timeLabel}${e.title}`;
+        ev.onclick = () => showModal(e);
+        cell.appendChild(ev);
+      });
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function showModal(item) {
+    document.getElementById("mTitle").textContent = item.title;
+    let timeText = item.date;
+    if (item.startTime) timeText += ` ${item.startTime}〜${item.endTime || ""}`;
+    document.getElementById("mDateTime").textContent = timeText;
+
+    const catWrap = document.getElementById("mCategoryWrap");
+    if (item.category) {
+      catWrap.style.display = "block";
+      document.getElementById("mCategory").textContent = item.category;
+    } else {
+      catWrap.style.display = "none";
+    }
+
+    const zoomWrap = document.getElementById("mZoomWrap");
+    if (item.zoom) {
+      zoomWrap.style.display = "block";
+      document.getElementById("mZoom").href = item.zoom;
+    } else {
+      zoomWrap.style.display = "none";
+    }
+
+    // 議事録リンク表示
+    const minuteWrap = document.getElementById("mMinuteWrap");
+    if (item.minutes) {
+      minuteWrap.style.display = "block";
+      document.getElementById("mMinute").href = item.minutes;
+    } else {
+      minuteWrap.style.display = "none";
+    }
+
+    // 詳細説明表示
+    const descWrap = document.getElementById("mDescWrap");
+    if (item.desc) {
+      descWrap.style.display = "block";
+      document.getElementById("mDesc").textContent = item.desc;
+    } else {
+      descWrap.style.display = "none";
+    }
+
+    document.getElementById("eventModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("eventModal").style.display = "none";
+  }
+
+  function moveMonth(diff) {
+    displayDate.setMonth(displayDate.getMonth() + diff);
+    renderCalendar();
+  }
+
+  renderCalendar();
+  loadSheetDataJSONP();
+</script>
+
+</body>
+</html>
